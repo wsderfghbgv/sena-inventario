@@ -1,7 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductosController;
 
+Route::resource('productos', ProductosController::class);
+
+// Redirigir la raíz al listado de productos
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('productos.index');
 });
