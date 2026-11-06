@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Location;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
@@ -19,7 +20,9 @@ class LocationController extends Controller
      */
     public function create()
     {
-        return view('location.create');
+        $locations = Location::all();
+
+        return view('locations.create', compact('locations'));
     }
 
     /**
@@ -28,11 +31,10 @@ class LocationController extends Controller
     public function store(Request $request)
     {
         $datosValidos = $request->validate([
-            'code'=> 'require|unique:locations,code',
-            'name'=> 'require|string|max:255',
-            'type'=> 'require|in:bodega,zona,estante,nivel,espacio',
-            'parent_id'=> 'nullable|exists:locations,id'
-
+            'code' => 'required|unique:locations,code',
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:bodega,zona,estante,nivel,espacio',
+            'parent_id' => 'nullable|exists:locations,id',
         ]);
 
         Location::create($datosValidos);
