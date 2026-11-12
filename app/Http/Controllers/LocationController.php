@@ -12,7 +12,8 @@ class LocationController extends Controller
      */
     public function index()
     {
-        
+        $locations = Location::with('parent')->latest()->paginate(10);
+        return view('locations.index', compact('locations'));
     }
 
     /**

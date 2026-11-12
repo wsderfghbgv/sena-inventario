@@ -1,23 +1,27 @@
+@extends('layouts.app')
 
+@section('content')
+<div class="mb-4">
+    <h2>Registrar Nueva Ubicación</h2>
+</div>
 
-
-
-<form method="POST" action="{{ route('locations.store') }}">
+<form action="{{ route('locations.store') }}" method="POST">
+    <!-- Token de seguridad obligatorio en Laravel -->
     @csrf
 
-    <div>
-        <label>Código de la ubicación:</label>
-        <input type="text" name="code" required>
+    <div class="mb-3">
+        <label class="form-label">Código:</label>
+        <input type="text" name="code" class="form-control" placeholder="Ej: B1-Z2-E3" required>
     </div>
 
-    <div>
-        <label>Nombre:</label>
-        <input type="text" name="name" required>
+    <div class="mb-3">
+        <label class="form-label">Nombre:</label>
+        <input type="text" name="name" class="form-control" placeholder="Ej: Estante Principal A" required>
     </div>
 
-    <div>
-        <label>Tipo de ubicación:</label>
-        <select name="type" required>
+    <div class="mb-3">
+        <label class="form-label">Tipo de ubicación:</label>
+        <select name="type" class="form-select" required>
             <option value="">Seleccione una opción...</option>
             <option value="bodega">Bodega</option>
             <option value="zona">Zona</option>
@@ -27,13 +31,11 @@
         </select>
     </div>
 
-    <!-- campo para la jerarquía (ubicación padre) -->
-    <div>
-        <label>Pertenece a (Opcional):</label>
-        <select name="parent_id">
+    <!-- Ubicación padre (Jerarquía) -->
+    <div class="mb-3">
+        <label class="form-label">Pertenece a (Opcional):</label>
+        <select name="parent_id" class="form-select">
             <option value="">Ninguna (Es una bodega principal)</option>
-
-            <!-- Recorremos las ubicaciones que nos mandó el compact -->
             @foreach($locations as $location)
                 <option value="{{ $location->id }}">
                     {{ $location->name }} ({{ $location->code }})
@@ -42,5 +44,7 @@
         </select>
     </div>
 
-    <button type="submit">Guardar ubicación</button>
+    <button type="submit" class="btn btn-primary">Guardar ubicación</button>
+    <a href="{{ route('locations.index') }}" class="btn btn-secondary">Volver</a>
 </form>
+@endsection
