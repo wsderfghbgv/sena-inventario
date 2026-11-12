@@ -16,7 +16,7 @@
                     <th>Código</th>
                     <th>Nombre</th>
                     <th>Tipo</th>
-                    <th>Ubicación Padre</th>
+                    <th>Ubicación </th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -25,11 +25,16 @@
                 @forelse($locations as $location)
                     <tr>
                         <td class="fw-bold">{{ $location->code }}</td>
-                        <td>{{ $location->name }}</td>
+                        <td>
+                            <strong>{{ $location->name }}</strong>
+                            @if($location->description)
+                                <br><small class="text-muted">{{ Str::limit($location->description, 50) }}</small>
+                            @endif
+                        </td>
                         <td>
                             <span class="badge bg-info text-dark">{{ ucfirst($location->type) }}</span>
                         </td>
-                        <td>{{ $location->parent ? $location->parent->name : 'Principal' }}</td>
+                        <td>{{ $location->parentLocation ? $location->parentLocation->name : 'Principal' }}</td>
                         <td>
                             @if($location->is_active)
                                 <span class="badge bg-success">Activo</span>

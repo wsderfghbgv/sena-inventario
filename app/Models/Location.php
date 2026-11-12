@@ -15,6 +15,7 @@ class Location extends Model
     protected $fillable = [
         'code', 
         'name', 
+        'description',
         'type', 
         'parent_id', 
         'is_active', 
@@ -27,7 +28,7 @@ class Location extends Model
      * Ejemplo: Si esto es un "Estante", retorna la "Zona" que lo contiene.
      * Relación: Muchos a Uno (Muchos estantes pertenecen a una zona).
      */
-    public function parent(): BelongsTo
+    public function parentLocation(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'parent_id');
     }

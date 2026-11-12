@@ -12,7 +12,7 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $locations = Location::with('parent')->latest()->paginate(10);
+        $locations = Location::with('parentLocation')->latest()->paginate(10);
         return view('locations.index', compact('locations'));
     }
 
@@ -34,9 +34,10 @@ class LocationController extends Controller
         $datosValidos = $request->validate([
             'code' => 'required|unique:locations,code',
             'name' => 'required|string|max:255',
-            'type' => 'required|in:bodega,zona,estante,nivel,espacio',
+            'description' => 'nullable|string',
+            'type' => 'required|in:ambiente,zona,mueble,compartimento,puesto',
             'parent_id' => 'nullable|exists:locations,id',
-        ]);
+        ]); 
 
         Location::create($datosValidos);
 

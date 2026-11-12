@@ -20,16 +20,21 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Tipo de ubicación:</label>
-        <select name="type" class="form-select" required>
-            <option value="">Seleccione una opción...</option>
-            <option value="bodega">Bodega</option>
-            <option value="zona">Zona</option>
-            <option value="estante">Estante</option>
-            <option value="nivel">Nivel</option>
-            <option value="espacio">Espacio</option>
-        </select>
-    </div>
+    <label for="type" class="form-label">Tipo de Ubicación</label>
+    <select name="type" id="type" class="form-select" required>
+        <option value="">Seleccione un tipo...</option>
+        <option value="ambiente">Ambiente</option>
+        <option value="zona">Zona</option>
+        <option value="mueble">Mueble / Mesa</option>
+        <option value="compartimento">Compartimento / Contenedor</option>
+        <option value="puesto">Puesto de Trabajo</option>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label for="description" class="form-label">Descripción (Opcional)</label>
+    <textarea name="description" id="description" class="form-control" rows="3" placeholder="Ej: Mesa con dos iMacs frente al mural, o casillero superior izquierdo..."></textarea>
+</div>
 
     <!-- Ubicación padre (Jerarquía) -->
     <div class="mb-3">
