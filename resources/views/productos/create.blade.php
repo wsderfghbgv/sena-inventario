@@ -35,8 +35,29 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Categoría:</label>
-                        <input type="text" name="categoria" class="form-control" value="{{ old('categoria') }}" required>
+                        <label for="categoria" class="form-label">Categoría:</label>
+                        <select name="categoria" id="categoria" class="form-select" required>
+                            <option value="">-- Seleccione una categoría --</option>
+                            @php
+                                $categorias = [
+                                    'Tecnología y Cómputo',
+                                    'Periféricos y Conectividad',
+                                    'Electrónica y Robótica',
+                                    'Herramientas',
+                                    'Equipos de Medición',
+                                    'Materiales e Insumos',
+                                    'Elementos de Protección (EPP)',
+                                    'Mobiliario y Enseres',
+                                    'Papelería y Oficina',
+                                    'Otros'
+                                ];
+                            @endphp
+                            @foreach($categorias as $cat)
+                                <option value="{{ $cat }}" {{ old('categoria') == $cat ? 'selected' : '' }}>
+                                    {{ $cat }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="mb-3">

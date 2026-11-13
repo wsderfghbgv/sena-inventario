@@ -27,8 +27,33 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Categoría:</label>
-                        <input type="text" name="categoria" class="form-control" value="{{ old('categoria', $producto->categoria) }}" required>
+                        <label for="categoria" class="form-label">Categoría:</label>
+                        <select name="categoria" id="categoria" class="form-select" required>
+                            <option value="">-- Seleccione una categoría --</option>
+                            @php
+                                $categorias = [
+                                    'Tecnología y Cómputo',
+                                    'Periféricos y Conectividad',
+                                    'Electrónica y Robótica',
+                                    'Herramientas',
+                                    'Equipos de Medición',
+                                    'Materiales e Insumos',
+                                    'Elementos de Protección (EPP)',
+                                    'Mobiliario y Enseres',
+                                    'Papelería y Oficina',
+                                    'Otros'
+                                ];
+                                $catSeleccionada = old('categoria', $producto->categoria);
+                            @endphp
+                            @if(!in_array($catSeleccionada, $categorias) && !empty($catSeleccionada))
+                                <option value="{{ $catSeleccionada }}" selected>{{ $catSeleccionada }}</option>
+                            @endif
+                            @foreach($categorias as $cat)
+                                <option value="{{ $cat }}" {{ $catSeleccionada == $cat ? 'selected' : '' }}>
+                                    {{ $cat }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="mb-3">
