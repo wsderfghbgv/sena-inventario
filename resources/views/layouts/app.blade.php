@@ -11,23 +11,112 @@
     <!-- Estilos personalizados para aplicar la identidad visual del SENA / SENNOVA -->
     <style>
         :root {
-            --sena-verde: #39A900;
-            --sena-verde-oscuro: #2e8600;
+            --sena-verde: #4DB848;
+            --sena-verde-oscuro: #39A900;
+            --sena-teal: #2BBFCC;
+            --sena-teal-oscuro: #1EA8B5;
         }
+
+        /* Fondo general con tono teal muy suave */
+        body.bg-light {
+            background-color: #f0fbfc !important;
+        }
+
         /* Navbar con el verde institucional del SENA */
         .navbar-sena {
             background-color: var(--sena-verde) !important;
         }
-        /* Botones principales con el color corporativo */
-        .btn-sena-primary {
-            background-color: var(--sena-verde);
-            border-color: var(--sena-verde);
-            color: #fff;
+
+        /* ===== ESTILO PILL PARA TODOS LOS BOTONES ===== */
+        .btn {
+            border-radius: 50px !important;
+            font-weight: 600 !important;
+            padding: 8px 22px !important;
+            transition: all 0.2s ease !important;
         }
-        .btn-sena-primary:hover {
-            background-color: var(--sena-verde-oscuro);
-            border-color: var(--sena-verde-oscuro);
-            color: #fff;
+        .btn-sm {
+            padding: 4px 14px !important;
+        }
+
+        /* Botón primario — verde SENA */
+        .btn-primary {
+            background-color: var(--sena-verde) !important;
+            border-color: var(--sena-verde) !important;
+            color: #fff !important;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--sena-verde-oscuro) !important;
+            border-color: var(--sena-verde-oscuro) !important;
+            color: #fff !important;
+        }
+
+        /* Botón secundario — teal SENA */
+        .btn-secondary {
+            background-color: var(--sena-teal) !important;
+            border-color: var(--sena-teal) !important;
+            color: #fff !important;
+        }
+        .btn-secondary:hover, .btn-secondary:focus {
+            background-color: var(--sena-teal-oscuro) !important;
+            border-color: var(--sena-teal-oscuro) !important;
+            color: #fff !important;
+        }
+
+        /* Outline secondary — teal con borde */
+        .btn-outline-secondary {
+            border-color: var(--sena-teal) !important;
+            color: var(--sena-teal) !important;
+        }
+        .btn-outline-secondary:hover {
+            background-color: var(--sena-teal) !important;
+            color: #fff !important;
+        }
+
+        /* Botón warning — Editar */
+        .btn-warning {
+            background-color: #f0a500 !important;
+            border-color: #f0a500 !important;
+            color: #fff !important;
+        }
+        .btn-warning:hover {
+            background-color: #cc8d00 !important;
+            border-color: #cc8d00 !important;
+            color: #fff !important;
+        }
+
+        /* Botón info — Ver */
+        .btn-info {
+            background-color: #17a2b8 !important;
+            border-color: #17a2b8 !important;
+            color: #fff !important;
+        }
+        .btn-info:hover {
+            background-color: #138496 !important;
+            border-color: #138496 !important;
+            color: #fff !important;
+        }
+
+        /* Botón danger — Eliminar */
+        .btn-danger {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: #fff !important;
+        }
+        .btn-danger:hover {
+            background-color: #bd2130 !important;
+            border-color: #bd2130 !important;
+            color: #fff !important;
+        }
+
+        /* Encabezado de tabla con verde oscuro */
+        .table-dark {
+            background-color: var(--sena-verde-oscuro) !important;
+        }
+
+        /* Cards con borde sutil */
+        .card {
+            border: none;
+            border-radius: 12px;
         }
     </style>
 </head>

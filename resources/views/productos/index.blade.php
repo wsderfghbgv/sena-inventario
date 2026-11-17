@@ -51,7 +51,7 @@
 <div class="card shadow-sm">
     <div class="card-body">
         <table class="table table-striped align-middle">
-            <thead class="table-dark">
+            <thead style="background-color: #39A900; color: #fff;">
                 <tr>
                     <th>Código</th>
                     <th>Nombre</th>
