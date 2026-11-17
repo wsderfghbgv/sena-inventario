@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ProductosController extends Controller
 {
-    // RF-002: Mostrar listado de productos con búsqueda y filtros
+    // Mostrar listado de productos con búsqueda y filtros
     public function index(Request $request)
     {
         $query = productos::query();
@@ -81,7 +81,7 @@ class ProductosController extends Controller
         return redirect()->route('productos.index')->with('success', 'Producto registrado exitosamente.');
     }
 
-    // RF-002: Mostrar detalle de un producto
+    // Mostrar detalle de un producto
     public function show($id)
     {
         $producto = productos::findOrFail($id);
@@ -95,7 +95,7 @@ class ProductosController extends Controller
         return view('productos.edit', compact('producto'));
     }
 
-    // RF-003 y RF-004: Modificar datos y cambiar estado conservando historial
+    // Modificar datos y cambiar estado conservando historial
     public function update(Request $request, $id)
     {
         $request->validate([
