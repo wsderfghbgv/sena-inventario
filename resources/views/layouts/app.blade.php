@@ -118,6 +118,41 @@
             border: none;
             border-radius: 12px;
         }
+
+        /* ===== BOTONES DE TABLA (Ver / Editar / Eliminar) ===== */
+        /* Ver — verde claro */
+        .btn-accion-ver {
+            background-color: #4DB848 !important;
+            border-color: #4DB848 !important;
+            color: #fff !important;
+        }
+        .btn-accion-ver:hover {
+            background-color: #39A900 !important;
+            border-color: #39A900 !important;
+            color: #fff !important;
+        }
+        /* Editar — verde oscuro */
+        .btn-accion-editar {
+            background-color: #39A900 !important;
+            border-color: #39A900 !important;
+            color: #fff !important;
+        }
+        .btn-accion-editar:hover {
+            background-color: #2e8600 !important;
+            border-color: #2e8600 !important;
+            color: #fff !important;
+        }
+        /* Eliminar — rojo (se mantiene para indicar peligro, pero en pill) */
+        .btn-accion-eliminar {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: #fff !important;
+        }
+        .btn-accion-eliminar:hover {
+            background-color: #bd2130 !important;
+            border-color: #bd2130 !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 <body class="bg-light">

@@ -78,12 +78,12 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-info text-white">Ver</a>
-                            <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-warning">Editar</a>
+                            <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-accion-ver">Ver</a>
+                            <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-accion-editar">Editar</a>
                             <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                <button type="submit" class="btn btn-sm btn-accion-eliminar">Eliminar</button>
                             </form>
                         </td>
                     </tr>
