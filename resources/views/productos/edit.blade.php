@@ -7,6 +7,16 @@
             <div class="card-body">
                 <h3 class="mb-4">Editar Producto</h3>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('productos.update', $producto->id) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -57,8 +67,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Unidad:</label>
-                        <input type="text" name="unidad" class="form-control" value="{{ old('unidad', $producto->unidad) }}" required>
+                        <label class="form-label">Unidad de Medida (Opcional):</label>
+                        <input type="text" name="unidad" class="form-control" value="{{ old('unidad', $producto->unidad) }}">
+                        <small class="text-muted">Si se deja vacío, se guardará como 'Unidad'.</small>
                     </div>
 
                     <div class="mb-3">

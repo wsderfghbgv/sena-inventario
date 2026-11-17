@@ -6,10 +6,6 @@
     <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo Producto</a>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
-
 <div class="card shadow-sm">
     <div class="card-body">
         <table class="table table-striped align-middle">
@@ -42,6 +38,11 @@
                         <td class="text-center">
                             <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-info text-white">Ver</a>
                             <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-warning">Editar</a>
+                            <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                            </form>
                         </td>
                     </tr>
                 @empty

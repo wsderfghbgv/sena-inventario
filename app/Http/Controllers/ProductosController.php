@@ -26,8 +26,9 @@ class ProductosController extends Controller
         $request->validate([
             'codigo' => 'required|string|unique:productos,codigo',
             'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
             'categoria' => 'required|string|max:255',
-            'unidad' => 'required|string|max:50',
+            'unidad' => 'nullable|string|max:50',
         ]);
 
         productos::create([
@@ -35,7 +36,7 @@ class ProductosController extends Controller
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'categoria' => $request->categoria,
-            'unidad' => $request->unidad,
+            'unidad' => $request->filled('unidad') ? $request->unidad : 'Unidad',
             'stock' => 0,
             'estado' => 'activo'
         ]);
@@ -62,8 +63,9 @@ class ProductosController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
             'categoria' => 'required|string|max:255',
-            'unidad' => 'required|string|max:50',
+            'unidad' => 'nullable|string|max:50',
             'estado' => 'required|string|in:activo,inactivo',
         ]);
 
@@ -73,7 +75,7 @@ class ProductosController extends Controller
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'categoria' => $request->categoria,
-            'unidad' => $request->unidad,
+            'unidad' => $request->filled('unidad') ? $request->unidad : 'Unidad',
             'estado' => $request->estado,
         ]);
 

@@ -61,8 +61,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Unidad de Medida:</label>
-                        <input type="text" name="unidad" class="form-control" placeholder="Ej: Unidades, Litros" value="{{ old('unidad') }}" required>
+                        <label class="form-label">Unidad de Medida (Opcional):</label>
+                        <input type="text" name="unidad" class="form-control" placeholder="Ej: Unidades, Metros, Litros" value="{{ old('unidad') }}">
+                        <small class="text-muted">Si se deja vacío, se guardará como 'Unidad'.</small>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Guardar</button>
