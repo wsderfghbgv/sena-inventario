@@ -66,6 +66,14 @@
                         <small class="text-muted">Si se deja vacío, se guardará como 'Unidad'.</small>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="estado" class="form-label">Estado:</label>
+                        <select name="estado" id="estado" class="form-select" required>
+                            <option value="activo" {{ old('estado', 'activo') == 'activo' ? 'selected' : '' }}>Activo</option>
+                            <option value="inactivo" {{ old('estado') == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Guardar</button>
                     <a href="{{ route('productos.index') }}" class="btn btn-secondary">Cancelar</a>
                 </form>

@@ -20,4 +20,21 @@ class productos extends Model
         'stock',
         'estado'
     ];
+
+    /**
+     * Scope para consultar únicamente productos activos
+     * (RF-004: Bloqueo de operaciones para productos inactivos en entradas/salidas)
+     */
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', 'activo');
+    }
+
+    /**
+     * Verificar si el producto se encuentra activo
+     */
+    public function estaActivo(): bool
+    {
+        return $this->estado === 'activo';
+    }
 }

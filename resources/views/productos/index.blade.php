@@ -6,6 +6,48 @@
     <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo Producto</a>
 </div>
 
+<!-- RF-002: Barra de Búsqueda y Filtros -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ route('productos.index') }}">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">Buscar por Código o Nombre:</label>
+                    <input type="text" name="buscar" class="form-control" placeholder="Ej: PROD-001 o Laptop" value="{{ request('buscar') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Categoría:</label>
+                    <select name="categoria" class="form-select">
+                        <option value="">Todas las categorías</option>
+                        @foreach($categorias as $cat)
+                            <option value="{{ $cat }}" {{ request('categoria') == $cat ? 'selected' : '' }}>
+                                {{ $cat }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Estado:</label>
+                    <select name="estado" class="form-select">
+                        <option value="">Todos los estados</option>
+                        <option value="activo" {{ request('estado') == 'activo' ? 'selected' : '' }}>Activo</option>
+                        <option value="inactivo" {{ request('estado') == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    @if(request()->hasAny(['buscar', 'categoria', 'estado']))
+                        <a href="{{ route('productos.index') }}" class="btn btn-outline-secondary" title="Limpiar filtros">Limpiar</a>
+                    @endif
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body">
         <table class="table table-striped align-middle">
@@ -47,7 +89,12 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted">No hay productos registrados.</td>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            No se encontraron productos registrados.
+                            @if(request()->hasAny(['buscar', 'categoria', 'estado']))
+                                <br><a href="{{ route('productos.index') }}" class="btn btn-sm btn-link mt-1">Limpiar filtros</a>
+                            @endif
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
