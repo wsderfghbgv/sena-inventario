@@ -3,7 +3,9 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Listado de Productos</h1>
-    <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo Producto</a>
+    @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+        <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo Producto</a>
+    @endif
 </div>
 
 <!-- RF-002: Barra de Búsqueda y Filtros -->
@@ -79,12 +81,14 @@
                         </td>
                         <td class="text-center">
                             <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-accion-ver">Ver</a>
-                            <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-accion-editar">Editar</a>
-                            <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-accion-eliminar">Eliminar</button>
-                            </form>
+                            @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+                                <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-accion-editar">Editar</a>
+                                <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-accion-eliminar">Eliminar</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @empty

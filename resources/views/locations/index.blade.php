@@ -3,9 +3,11 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Listado de Ubicaciones</h2>
-    <a href="{{ route('locations.create') }}" class="btn btn-primary">
-        + Nueva Ubicación
-    </a>
+    @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+        <a href="{{ route('locations.create') }}" class="btn btn-primary">
+            + Nueva Ubicación
+        </a>
+    @endif
 </div>
 
 <div class="card shadow-sm">
@@ -43,9 +45,13 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('locations.edit', $location->id) }}" class="btn btn-sm btn-outline-primary">
-                                Editar
-                            </a>
+                            @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+                                <a href="{{ route('locations.edit', $location->id) }}" class="btn btn-sm btn-outline-primary">
+                                    Editar
+                                </a>
+                            @else
+                                <span class="text-muted small">Solo lectura</span>
+                            @endif
                         </td>
                     </tr>
                 @empty

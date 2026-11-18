@@ -165,18 +165,47 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('productos.index') }}">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('locations.index') }}">Ubicaciones</a>
-                    </li>
-                </ul>
-                <div class="navbar-nav">
-                    <a class="nav-link text-white" href="{{ route('productos.create') }}">+ Nuevo Producto</a>
-                    <a class="nav-link text-white" href="{{ route('locations.create') }}">+ Nueva Ubicación</a>
-                </div>
+                @auth
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ route('productos.index') }}">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ route('locations.index') }}">Ubicaciones</a>
+                        </li>
+                        @if(Auth::user()->esAdmin())
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{{ route('usuarios.index') }}">Usuarios y Roles</a>
+                            </li>
+                        @endif
+                    </ul>
+                    <div class="navbar-nav align-items-center gap-2">
+                        <span class="text-white small">
+                            <strong>{{ Auth::user()->name }}</strong>
+                            @if(Auth::user()->rol === 'admin')
+                                <span class="badge ms-1" style="background-color: #1565C0;">Admin</span>
+                            @elseif(Auth::user()->rol === 'instructor')
+                                <span class="badge ms-1" style="background-color: #2BBFCC; color: #fff;">Instructor</span>
+                            @else
+                                <span class="badge ms-1" style="background-color: #4DB848;">Aprendiz</span>
+                            @endif
+                        </span>
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline ms-2">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-outline-light text-white" style="border-radius: 50px;">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="btn btn-sm btn-light fw-bold" href="{{ route('login') }}" style="color: #39A900; border-radius: 50px;">
+                                Iniciar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                @endauth
             </div>
         </div>
     </nav>
