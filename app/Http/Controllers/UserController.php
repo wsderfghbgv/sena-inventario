@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Auditoria;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -75,13 +76,26 @@ class UserController extends Controller
             'estado.required' => 'Debe seleccionar un estado.',
         ]);
 
-        User::create([
+        $nuevoUsuario = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'rol_id' => $validated['rol_id'],
             'estado' => $validated['estado'],
         ]);
+
+        // RF-023: Auditoría de creación de usuario
+        Auditoria::registrar(
+            'CREAR_USUARIO',
+            'Usuarios',
+            "Creación del usuario {$nuevoUsuario->name} con rol {$nuevoUsuario->rol_nombre} y estado {$nuevoUsuario->estado}.",
+            [
+                'id' => $nuevoUsuario->id,
+                'email' => $nuevoUsuario->email,
+                'rol' => $nuevoUsuario->rol_nombre,
+                'estado' => $nuevoUsuario->estado,
+            ]
+        );
 
         return redirect()->route('usuarios.index')
             ->with('success', 'Usuario registrado exitosamente.');
@@ -128,6 +142,13 @@ class UserController extends Controller
             }
         }
 
+        $datosAnteriores = [
+            'name' => $usuario->name,
+            'email' => $usuario->email,
+            'rol' => $usuario->rol_nombre,
+            'estado' => $usuario->estado,
+        ];
+
         $usuario->name = $validated['name'];
         $usuario->email = $validated['email'];
         $usuario->rol_id = $validated['rol_id'];
@@ -138,6 +159,22 @@ class UserController extends Controller
         }
 
         $usuario->save();
+
+        // RF-023: Auditoría de actualización de usuario
+        Auditoria::registrar(
+            'ACTUALIZAR_USUARIO',
+            'Usuarios',
+            "Modificación del usuario {$usuario->name} (ID: {$usuario->id}).",
+            [
+                'antes' => $datosAnteriores,
+                'despues' => [
+                    'name' => $usuario->name,
+                    'email' => $usuario->email,
+                    'rol' => $usuario->fresh()->rol_nombre,
+                    'estado' => $usuario->estado,
+                ]
+            ]
+        );
 
         return redirect()->route('usuarios.index')
             ->with('success', 'Usuario actualizado correctamente.');
@@ -154,7 +191,22 @@ class UserController extends Controller
                 ->with('error', 'No puedes eliminar tu propia cuenta de administrador.');
         }
 
+        $infoEliminado = [
+            'id' => $usuario->id,
+            'name' => $usuario->name,
+            'email' => $usuario->email,
+            'rol' => $usuario->rol_nombre,
+        ];
+
         $usuario->delete();
+
+        // RF-023: Auditoría de eliminación
+        Auditoria::registrar(
+            'ELIMINAR_USUARIO',
+            'Usuarios',
+            "Eliminación del usuario {$infoEliminado['name']} ({$infoEliminado['email']}).",
+            $infoEliminado
+        );
 
         return redirect()->route('usuarios.index')
             ->with('success', 'Usuario eliminado exitosamente.');

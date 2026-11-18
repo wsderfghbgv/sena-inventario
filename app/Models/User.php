@@ -47,7 +47,17 @@ class User extends Authenticatable
      */
     public function getRolNombreAttribute(): string
     {
-        return $this->role?->nombre ?? 'aprendiz';
+        // 1. Si tiene la relación con la tabla roles
+        if ($this->role && !empty($this->role->nombre)) {
+            return strtolower(trim($this->role->nombre));
+        }
+
+        // 2. Si tiene la columna directa 'rol' en la tabla users
+        if (!empty($this->attributes['rol'])) {
+            return strtolower(trim($this->attributes['rol']));
+        }
+
+        return 'aprendiz';
     }
 
     // Para compatibilidad hacia atrás con $user->rol
@@ -84,5 +94,24 @@ class User extends Authenticatable
         $roles = is_array($roles) ? $roles : explode(',', $roles);
         $roles = array_map('trim', $roles);
         return in_array($this->rol_nombre, $roles, true);
+    }
+
+    /**
+     * Comprueba si el usuario tiene un permiso específico (RF-022).
+     */
+    public function tienePermiso(string $permisoNombre): bool
+    {
+        // 1. El rol administrador tiene acceso total siempre
+        if ($this->esAdmin()) {
+            return true;
+        }
+
+        // 2. Si no está activo, no tiene permisos
+        if (!$this->estaActivo()) {
+            return false;
+        }
+
+        // 3. Comprobar a través del rol asignado
+        return $this->role ? $this->role->tienePermiso($permisoNombre) : false;
     }
 }

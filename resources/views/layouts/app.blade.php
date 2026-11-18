@@ -175,16 +175,22 @@
                         </li>
                         @if(Auth::user()->esAdmin())
                             <li class="nav-item">
-                                <a class="nav-link text-white" href="{{ route('usuarios.index') }}">Usuarios y Roles</a>
+                                <a class="nav-link text-white" href="{{ route('usuarios.index') }}">Usuarios</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{{ route('permisos.index') }}">Permisos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{{ route('auditoria.index') }}">Auditoría</a>
                             </li>
                         @endif
                     </ul>
                     <div class="navbar-nav align-items-center gap-2">
                         <span class="text-white small">
                             <strong>{{ Auth::user()->name }}</strong>
-                            @if(Auth::user()->rol === 'admin')
+                            @if(Auth::user()->esAdmin())
                                 <span class="badge ms-1" style="background-color: #1565C0;">Admin</span>
-                            @elseif(Auth::user()->rol === 'instructor')
+                            @elseif(Auth::user()->esInstructor())
                                 <span class="badge ms-1" style="background-color: #2BBFCC; color: #fff;">Instructor</span>
                             @else
                                 <span class="badge ms-1" style="background-color: #4DB848;">Aprendiz</span>

@@ -3,7 +3,7 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Listado de Ubicaciones</h2>
-    @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+    @if(Auth::user()?->tienePermiso('locations.crear'))
         <a href="{{ route('locations.create') }}" class="btn btn-primary">
             + Nueva Ubicación
         </a>
@@ -45,7 +45,7 @@
                             @endif
                         </td>
                         <td>
-                            @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+                            @if(Auth::user()?->tienePermiso('locations.editar'))
                                 <a href="{{ route('locations.edit', $location->id) }}" class="btn btn-sm btn-outline-primary">
                                     Editar
                                 </a>

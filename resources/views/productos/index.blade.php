@@ -3,7 +3,7 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Listado de Productos</h1>
-    @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+    @if(Auth::user()?->tienePermiso('productos.crear'))
         <a href="{{ route('productos.create') }}" class="btn btn-primary">+ Nuevo Producto</a>
     @endif
 </div>
@@ -80,9 +80,13 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-accion-ver">Ver</a>
-                            @if(Auth::user()?->tieneRol(['admin', 'instructor']))
+                            @if(Auth::user()?->tienePermiso('productos.ver'))
+                                <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-accion-ver">Ver</a>
+                            @endif
+                            @if(Auth::user()?->tienePermiso('productos.editar'))
                                 <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-accion-editar">Editar</a>
+                            @endif
+                            @if(Auth::user()?->tienePermiso('productos.eliminar'))
                                 <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
                                     @csrf
                                     @method('DELETE')

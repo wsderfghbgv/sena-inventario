@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\UserController;
 
@@ -24,7 +26,7 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rutas Protegidas (Requieren inicio de sesión y usuario activo - RF-020 / RF-021)
+| Rutas Protegidas (Requieren inicio de sesión y usuario activo - RF-020 / RF-021 / RF-022 / RF-023)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role'])->group(function () {
@@ -32,30 +34,60 @@ Route::middleware(['auth', 'role'])->group(function () {
     // Cierre de sesión (RF-020)
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Rutas operativas de inventario (Admin e Instructor pueden crear y modificar)
-    Route::middleware('role:admin,instructor')->group(function () {
+    // Operaciones de creación, edición y eliminación de inventario (Protegidas por Permisos - RF-022)
+    Route::middleware('permission:productos.crear')->group(function () {
         Route::get('/productos/create', [ProductosController::class, 'create'])->name('productos.create');
         Route::post('/productos', [ProductosController::class, 'store'])->name('productos.store');
+    });
+
+    Route::middleware('permission:productos.editar')->group(function () {
         Route::get('/productos/{producto}/edit', [ProductosController::class, 'edit'])->name('productos.edit');
         Route::put('/productos/{producto}', [ProductosController::class, 'update'])->name('productos.update');
-        Route::delete('/productos/{producto}', [ProductosController::class, 'destroy'])->name('productos.destroy');
+    });
 
+    Route::middleware('permission:productos.eliminar')->group(function () {
+        Route::delete('/productos/{producto}', [ProductosController::class, 'destroy'])->name('productos.destroy');
+    });
+
+    // Ubicaciones protegidas por permisos (RF-022)
+    Route::middleware('permission:locations.crear')->group(function () {
         Route::get('/locations/create', [LocationController::class, 'create'])->name('locations.create');
         Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
+    });
+
+    Route::middleware('permission:locations.editar')->group(function () {
         Route::get('/locations/{location}/edit', [LocationController::class, 'edit'])->name('locations.edit');
         Route::put('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
+    });
+
+    Route::middleware('permission:locations.eliminar')->group(function () {
         Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
     });
 
-    // Módulos de consulta accesibles para todos los roles autenticados (Admin, Instructor, Aprendiz)
-    Route::get('/productos', [ProductosController::class, 'index'])->name('productos.index');
-    Route::get('/productos/{producto}', [ProductosController::class, 'show'])->name('productos.show');
+    // Módulos de consulta accesibles con permiso de lectura (RF-022)
+    Route::middleware('permission:productos.ver')->group(function () {
+        Route::get('/productos', [ProductosController::class, 'index'])->name('productos.index');
+        Route::get('/productos/{producto}', [ProductosController::class, 'show'])->name('productos.show');
+    });
 
-    Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
-    Route::get('/locations/{location}', [LocationController::class, 'show'])->name('locations.show');
+    Route::middleware('permission:locations.ver')->group(function () {
+        Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
+        Route::get('/locations/{location}', [LocationController::class, 'show'])->name('locations.show');
+    });
 
     // Gestión de Usuarios y Roles (Exclusivo Administrador - RF-021)
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'permission:usuarios.gestionar'])->group(function () {
         Route::resource('usuarios', UserController::class)->except(['show']);
+    });
+
+    // Gestión y Modificación de Permisos en Servidor (Exclusivo Administrador - RF-022)
+    Route::middleware(['role:admin', 'permission:permisos.modificar'])->group(function () {
+        Route::get('/permisos', [PermisoController::class, 'index'])->name('permisos.index');
+        Route::put('/permisos', [PermisoController::class, 'update'])->name('permisos.update');
+    });
+
+    // Consulta de Auditoría Inmutable (Exclusivo Administrador - RF-023)
+    Route::middleware(['role:admin', 'permission:auditoria.consultar'])->group(function () {
+        Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     });
 });
