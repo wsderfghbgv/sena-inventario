@@ -11,12 +11,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'rol_id', 'estado'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'rol_id',
+        'estado',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     public const ESTADO_ACTIVO = 'activo';
     public const ESTADO_INACTIVO = 'inactivo';
