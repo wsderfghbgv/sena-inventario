@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::query();
+        $query = User::with('role');
 
         // Filtro por término de búsqueda (nombre o correo)
         if ($request->filled('buscar')) {
@@ -26,9 +27,9 @@ class UserController extends Controller
             });
         }
 
-        // Filtro por rol
-        if ($request->filled('rol')) {
-            $query->where('rol', $request->rol);
+        // Filtro por rol (puede ser por ID o por nombre de rol)
+        if ($request->filled('rol_id')) {
+            $query->where('rol_id', $request->rol_id);
         }
 
         // Filtro por estado
@@ -37,8 +38,9 @@ class UserController extends Controller
         }
 
         $usuarios = $query->orderBy('name')->paginate(10)->withQueryString();
+        $roles = Role::orderBy('nombre')->get();
 
-        return view('usuarios.index', compact('usuarios'));
+        return view('usuarios.index', compact('usuarios', 'roles'));
     }
 
     /**
@@ -46,7 +48,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('usuarios.create');
+        $roles = Role::orderBy('nombre')->get();
+        return view('usuarios.create', compact('roles'));
     }
 
     /**
@@ -58,7 +61,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6'],
-            'rol' => ['required', Rule::in([User::ROL_ADMIN, User::ROL_INSTRUCTOR, User::ROL_APRENDIZ])],
+            'rol_id' => ['required', 'exists:roles,id'],
             'estado' => ['required', Rule::in([User::ESTADO_ACTIVO, User::ESTADO_INACTIVO])],
         ], [
             'name.required' => 'El nombre completo es obligatorio.',
@@ -67,7 +70,8 @@ class UserController extends Controller
             'email.unique' => 'Este correo electrónico ya se encuentra registrado.',
             'password.required' => 'La contraseña es obligatoria.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
-            'rol.required' => 'Debe seleccionar un rol válido.',
+            'rol_id.required' => 'Debe seleccionar un rol válido.',
+            'rol_id.exists' => 'El rol seleccionado no existe en la base de datos.',
             'estado.required' => 'Debe seleccionar un estado.',
         ]);
 
@@ -75,12 +79,12 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'rol' => $validated['rol'],
+            'rol_id' => $validated['rol_id'],
             'estado' => $validated['estado'],
         ]);
 
         return redirect()->route('usuarios.index')
-            ->with('success', 'Usuario registrado exitosamente con rol ' . ucfirst($validated['rol']) . '.');
+            ->with('success', 'Usuario registrado exitosamente.');
     }
 
     /**
@@ -88,7 +92,8 @@ class UserController extends Controller
      */
     public function edit(User $usuario)
     {
-        return view('usuarios.edit', compact('usuario'));
+        $roles = Role::orderBy('nombre')->get();
+        return view('usuarios.edit', compact('usuario', 'roles'));
     }
 
     /**
@@ -99,31 +104,33 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($usuario->id)],
-            'rol' => ['required', Rule::in([User::ROL_ADMIN, User::ROL_INSTRUCTOR, User::ROL_APRENDIZ])],
+            'rol_id' => ['required', 'exists:roles,id'],
             'estado' => ['required', Rule::in([User::ESTADO_ACTIVO, User::ESTADO_INACTIVO])],
             'password' => ['nullable', 'string', 'min:6'],
         ], [
             'name.required' => 'El nombre es obligatorio.',
             'email.required' => 'El correo es obligatorio.',
             'email.unique' => 'Este correo ya pertenece a otro usuario.',
-            'rol.required' => 'El rol es obligatorio.',
+            'rol_id.required' => 'El rol es obligatorio.',
+            'rol_id.exists' => 'El rol seleccionado no es válido.',
             'estado.required' => 'El estado es obligatorio.',
             'password.min' => 'La nueva contraseña debe tener al menos 6 caracteres.',
         ]);
 
         // Evitar que el administrador autenticado se inactive a sí mismo o se quite el rol de administrador
         if (Auth::id() === $usuario->id) {
+            $adminRole = Role::where('nombre', Role::ADMIN)->first();
             if ($validated['estado'] !== User::ESTADO_ACTIVO) {
                 return back()->withErrors(['estado' => 'No puedes desactivar tu propia cuenta de administrador.'])->withInput();
             }
-            if ($validated['rol'] !== User::ROL_ADMIN) {
-                return back()->withErrors(['rol' => 'No puedes remover tu propio rol de administrador.'])->withInput();
+            if ($adminRole && (int)$validated['rol_id'] !== $adminRole->id) {
+                return back()->withErrors(['rol_id' => 'No puedes remover tu propio rol de administrador.'])->withInput();
             }
         }
 
         $usuario->name = $validated['name'];
         $usuario->email = $validated['email'];
-        $usuario->rol = $validated['rol'];
+        $usuario->rol_id = $validated['rol_id'];
         $usuario->estado = $validated['estado'];
 
         if (!empty($validated['password'])) {

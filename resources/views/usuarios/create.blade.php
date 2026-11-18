@@ -8,7 +8,7 @@
                 <div class="d-flex align-items-center mb-3">
                     <h3 class="fw-bold mb-0">Registrar Usuario</h3>
                 </div>
-                <p class="text-muted small">Cree una nueva cuenta de acceso y asigne su rol correspondiente (RF-021).</p>
+                <p class="text-muted small">Cree una cuenta y vincule el rol desde la tabla de roles (RF-021).</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger py-2 small">
@@ -39,12 +39,14 @@
 
                     <div class="row g-2 mb-4">
                         <div class="col-md-6">
-                            <label for="rol" class="form-label small fw-bold">Rol Asignado:</label>
-                            <select name="rol" id="rol" class="form-select" required>
+                            <label for="rol_id" class="form-label small fw-bold">Rol Asignado (Tabla Roles):</label>
+                            <select name="rol_id" id="rol_id" class="form-select" required>
                                 <option value="">-- Seleccionar Rol --</option>
-                                <option value="admin" {{ old('rol') === 'admin' ? 'selected' : '' }}>Administrador</option>
-                                <option value="instructor" {{ old('rol') === 'instructor' ? 'selected' : '' }}>Instructor</option>
-                                <option value="aprendiz" {{ old('rol', 'aprendiz') === 'aprendiz' ? 'selected' : '' }}>Aprendiz</option>
+                                @foreach($roles as $r)
+                                    <option value="{{ $r->id }}" {{ old('rol_id') == $r->id ? 'selected' : '' }}>
+                                        {{ ucfirst($r->nombre) }}
+                                    </option>
+                                @endforeach
                             </select>
                             <small class="text-muted d-block mt-1">Define los permisos en rutas protegidas.</small>
                         </div>
@@ -55,7 +57,7 @@
                                 <option value="activo" {{ old('estado', 'activo') === 'activo' ? 'selected' : '' }}>Activo (Habilitado)</option>
                                 <option value="inactivo" {{ old('estado') === 'inactivo' ? 'selected' : '' }}>Inactivo (Bloqueado)</option>
                             </select>
-                            <small class="text-muted d-block mt-1">Solo los usuarios activos pueden autenticarse.</small>
+                            <small class="text-muted d-block mt-1">Solo usuarios activos pueden autenticarse.</small>
                         </div>
                     </div>
 

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('rol', 50)->default('aprendiz')->after('email'); // admin, instructor, aprendiz
-            $table->string('estado', 20)->default('activo')->after('rol');   // activo, inactivo
+            $table->foreignId('rol_id')->nullable()->after('email')->constrained('roles')->nullOnDelete();
+            $table->string('estado', 20)->default('activo')->after('rol_id');
         });
     }
 
@@ -23,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['rol', 'estado']);
+            $table->dropForeign(['rol_id']);
+            $table->dropColumn(['rol_id', 'estado']);
         });
     }
 };

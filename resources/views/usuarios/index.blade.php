@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h2 class="fw-bold mb-0">Gestión de Usuarios</h2>
-        <p class="text-muted small mb-0">Administración de credenciales, roles y accesos al sistema (RF-021)</p>
+        <p class="text-muted small mb-0">Administración de credenciales, roles normalizados y accesos al sistema (RF-021)</p>
     </div>
     <a href="{{ route('usuarios.create') }}" class="btn btn-primary">+ Nuevo Usuario</a>
 </div>
@@ -21,11 +21,13 @@
 
                 <div class="col-md-3">
                     <label class="form-label small fw-bold">Rol:</label>
-                    <select name="rol" class="form-select">
+                    <select name="rol_id" class="form-select">
                         <option value="">Todos los roles</option>
-                        <option value="admin" {{ request('rol') == 'admin' ? 'selected' : '' }}>Administrador</option>
-                        <option value="instructor" {{ request('rol') == 'instructor' ? 'selected' : '' }}>Instructor</option>
-                        <option value="aprendiz" {{ request('rol') == 'aprendiz' ? 'selected' : '' }}>Aprendiz</option>
+                        @foreach($roles as $r)
+                            <option value="{{ $r->id }}" {{ request('rol_id') == $r->id ? 'selected' : '' }}>
+                                {{ ucfirst($r->nombre) }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -40,7 +42,7 @@
 
                 <div class="col-md-2 d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-                    @if(request()->hasAny(['buscar', 'rol', 'estado']))
+                    @if(request()->hasAny(['buscar', 'rol_id', 'estado']))
                         <a href="{{ route('usuarios.index') }}" class="btn btn-outline-secondary" title="Limpiar filtros">Limpiar</a>
                     @endif
                 </div>
@@ -57,7 +59,7 @@
                     <tr>
                         <th class="ps-3">Nombre</th>
                         <th>Correo Electrónico</th>
-                        <th>Rol</th>
+                        <th>Rol (Tabla Roles)</th>
                         <th>Estado</th>
                         <th>Registrado</th>
                         <th class="text-center pe-3">Acciones</th>
@@ -65,6 +67,9 @@
                 </thead>
                 <tbody>
                     @forelse($usuarios as $u)
+                        @php
+                            $nombreRol = $u->role?->nombre ?? 'Sin Rol';
+                        @endphp
                         <tr>
                             <td class="ps-3 fw-semibold">
                                 {{ $u->name }}
@@ -74,12 +79,14 @@
                             </td>
                             <td>{{ $u->email }}</td>
                             <td>
-                                @if($u->rol === 'admin')
+                                @if($nombreRol === 'admin')
                                     <span class="badge" style="background-color: #1565C0;">Administrador</span>
-                                @elseif($u->rol === 'instructor')
+                                @elseif($nombreRol === 'instructor')
                                     <span class="badge" style="background-color: #2BBFCC; color: #fff;">Instructor</span>
-                                @else
+                                @elseif($nombreRol === 'aprendiz')
                                     <span class="badge" style="background-color: #4DB848;">Aprendiz</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ ucfirst($nombreRol) }}</span>
                                 @endif
                             </td>
                             <td>
@@ -109,7 +116,7 @@
                         <tr>
                             <td colspan="6" class="text-center py-4 text-muted">
                                 No se encontraron usuarios registrados con los criterios seleccionados.
-                                @if(request()->hasAny(['buscar', 'rol', 'estado']))
+                                @if(request()->hasAny(['buscar', 'rol_id', 'estado']))
                                     <br><a href="{{ route('usuarios.index') }}" class="btn btn-sm btn-link mt-1">Limpiar filtros</a>
                                 @endif
                             </td>

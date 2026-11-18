@@ -36,11 +36,13 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label for="rol" class="form-label small fw-bold">Rol Asignado:</label>
-                            <select name="rol" id="rol" class="form-select" required {{ Auth::id() === $usuario->id ? 'readonly' : '' }}>
-                                <option value="admin" {{ old('rol', $usuario->rol) === 'admin' ? 'selected' : '' }}>Administrador</option>
-                                <option value="instructor" {{ old('rol', $usuario->rol) === 'instructor' ? 'selected' : '' }}>Instructor</option>
-                                <option value="aprendiz" {{ old('rol', $usuario->rol) === 'aprendiz' ? 'selected' : '' }}>Aprendiz</option>
+                            <label for="rol_id" class="form-label small fw-bold">Rol Asignado:</label>
+                            <select name="rol_id" id="rol_id" class="form-select" required {{ Auth::id() === $usuario->id ? 'readonly' : '' }}>
+                                @foreach($roles as $r)
+                                    <option value="{{ $r->id }}" {{ old('rol_id', $usuario->rol_id) == $r->id ? 'selected' : '' }}>
+                                        {{ ucfirst($r->nombre) }}
+                                    </option>
+                                @endforeach
                             </select>
                             @if(Auth::id() === $usuario->id)
                                 <small class="text-muted d-block mt-1">No puedes cambiar tu propio rol.</small>
