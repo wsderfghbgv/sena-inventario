@@ -176,6 +176,8 @@
                 <div class="navbar-nav">
                     <a class="nav-link text-white" href="{{ route('productos.create') }}">+ Nuevo Producto</a>
                     <a class="nav-link text-white" href="{{ route('locations.create') }}">+ Nueva Ubicación</a>
+                    <a class="nav-link text-white" href="{{ route('entradas.create') }}">+ Registrar Entrada</a>
+
                 </div>
             </div>
         </div>
