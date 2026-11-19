@@ -153,6 +153,32 @@
             border-color: #bd2130 !important;
             color: #fff !important;
         }
+
+        /* ===== ESTILOS PARA MENÚS DESPLEGABLES (DROPDOWNS) ===== */
+        .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 8px;
+        }
+        .dropdown-item {
+            border-radius: 8px;
+            font-size: 0.92rem;
+            padding: 8px 14px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        .dropdown-item:hover, .dropdown-item:focus {
+            background-color: #f0fbfc;
+            color: #39A900;
+        }
+        .dropdown-item.active, .dropdown-item:active {
+            background-color: var(--sena-verde);
+            color: #fff;
+        }
+        .nav-link.dropdown-toggle:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -160,51 +186,123 @@
     <!-- Menú de navegación con estilo SENA -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-sena mb-4 shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ url('/') }}">SENA / SENNOVA - Inventario</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ url('/') }}">
+                <span>SENA / SENNOVA</span>
+                <span class="badge bg-light text-dark fw-normal small px-2 py-1" style="font-size: 0.75rem;">Inventario</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 @auth
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ route('productos.index') }}">Productos</a>
+                    <ul class="navbar-nav me-auto align-items-lg-center">
+                        <!-- Menú Desplegable: Inventario -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white fw-semibold px-3" href="#" id="inventarioDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Inventario
+                            </a>
+                            <ul class="dropdown-menu shadow-sm" aria-labelledby="inventarioDropdown">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('productos.index') }}">
+                                        <span>Productos</span>
+                                        @if(Auth::user()->tienePermiso('productos.crear'))
+                                            <span class="badge bg-light text-success border ms-2 small">+ Nuevo</span>
+                                        @endif
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('locations.index') }}">
+                                        <span>Ubicaciones</span>
+                                        @if(Auth::user()->tienePermiso('locations.crear'))
+                                            <span class="badge bg-light text-success border ms-2 small">+ Nueva</span>
+                                        @endif
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <h6 class="dropdown-header text-uppercase small text-muted">Movimientos</h6>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('entradas.create') }}">
+                                        Registrar Entrada
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ route('locations.index') }}">Ubicaciones</a>
-                        </li>
+
+                        <!-- Menú Desplegable: Administración y Seguridad (Solo Admin) -->
                         @if(Auth::user()->esAdmin())
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{{ route('usuarios.index') }}">Usuarios</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{{ route('permisos.index') }}">Permisos</a>
-                            </li>
-                            <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ route('entradas.create') }}">Registrar entrada</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{{ route('auditoria.index') }}">Auditoría</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white fw-semibold px-3" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Administración
+                                </a>
+                                <ul class="dropdown-menu shadow-sm" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <h6 class="dropdown-header text-uppercase small text-muted">Gestión y Control</h6>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('usuarios.index') }}">
+                                            Usuarios y Cuentas
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('permisos.index') }}">
+                                            Matriz de Permisos
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <h6 class="dropdown-header text-uppercase small text-muted">Seguridad</h6>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('auditoria.index') }}">
+                                            Historial de Auditoría
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         @endif
                     </ul>
-                    <div class="navbar-nav align-items-center gap-2">
-                        <span class="text-white small">
-                            <strong>{{ Auth::user()->name }}</strong>
-                            @if(Auth::user()->esAdmin())
-                                <span class="badge ms-1" style="background-color: #1565C0;">Admin</span>
-                            @elseif(Auth::user()->esInstructor())
-                                <span class="badge ms-1" style="background-color: #2BBFCC; color: #fff;">Instructor</span>
-                            @else
-                                <span class="badge ms-1" style="background-color: #4DB848;">Aprendiz</span>
-                            @endif
-                        </span>
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline ms-2">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-light text-white" style="border-radius: 50px;">
-                                Cerrar sesión
+
+                    <!-- Menú Desplegable de Usuario y Sesión (A la derecha) -->
+                    <div class="navbar-nav align-items-center">
+                        <div class="nav-item dropdown">
+                            <button class="btn btn-sm btn-light dropdown-toggle d-flex align-items-center gap-2 px-3 shadow-sm" 
+                                    type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
+                                    style="border-radius: 50px; background-color: #ffffff; color: #2e8600; font-weight: 600;">
+                                <span>{{ Auth::user()->name }}</span>
+                                @if(Auth::user()->esAdmin())
+                                    <span class="badge" style="background-color: #1565C0; color: #fff;">Admin</span>
+                                @elseif(Auth::user()->esInstructor())
+                                    <span class="badge" style="background-color: #2BBFCC; color: #fff;">Instructor</span>
+                                @else
+                                    <span class="badge" style="background-color: #4DB848; color: #fff;">Aprendiz</span>
+                                @endif
                             </button>
-                        </form>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenuDropdown" style="min-width: 230px;">
+                                <li class="px-3 py-2 bg-light rounded-top">
+                                    <div class="fw-bold text-dark text-truncate">{{ Auth::user()->name }}</div>
+                                    <div class="text-muted small text-truncate">{{ Auth::user()->email }}</div>
+                                    <div class="mt-1">
+                                        <span class="badge bg-secondary small text-capitalize">{{ Auth::user()->rol_nombre }}</span>
+                                        <span class="badge bg-success small text-capitalize ms-1">{{ Auth::user()->estado }}</span>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                                            </svg>
+                                            <span>Cerrar sesión</span>
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 @else
                     <ul class="navbar-nav ms-auto">
