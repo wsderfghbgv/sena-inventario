@@ -8,12 +8,8 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EntradaController;
 
-/*
-|--------------------------------------------------------------------------
-| Rutas Públicas (Autenticación - RF-020)
-|--------------------------------------------------------------------------
-*/
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -24,11 +20,7 @@ Route::get('/', function () {
     return Auth::check() ? redirect()->route('productos.index') : redirect()->route('login');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Rutas Protegidas (Requieren inicio de sesión y usuario activo - RF-020 / RF-021 / RF-022 / RF-023)
-|--------------------------------------------------------------------------
-*/
+
 Route::middleware(['auth', 'role'])->group(function () {
 
     // Cierre de sesión (RF-020)
@@ -90,4 +82,7 @@ Route::middleware(['auth', 'role'])->group(function () {
     Route::middleware(['role:admin', 'permission:auditoria.consultar'])->group(function () {
         Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     });
+
+    Route::get('/entradas/crear', [EntradaController::class, 'create'])->name('entradas.create');
+    Route::post('/entradas', [EntradaController::class, 'store'])->name('entradas.store');
 });

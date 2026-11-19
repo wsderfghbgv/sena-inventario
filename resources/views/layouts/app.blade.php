@@ -181,6 +181,9 @@
                                 <a class="nav-link text-white" href="{{ route('permisos.index') }}">Permisos</a>
                             </li>
                             <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ route('entradas.create') }}">Registrar entrada</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-white" href="{{ route('auditoria.index') }}">Auditoría</a>
                             </li>
                         @endif

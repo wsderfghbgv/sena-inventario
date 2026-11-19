@@ -13,6 +13,7 @@ class Entrada extends Model
     protected $fillable = [
         'numero',
         'fecha',
+        'hora',
         'usuario_id',
         'ubicacion_id',
         'observaciones',
