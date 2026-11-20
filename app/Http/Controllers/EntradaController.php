@@ -7,6 +7,7 @@ use App\Models\Location;
 use App\Models\productos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class EntradaController extends Controller
 {
@@ -28,41 +29,24 @@ class EntradaController extends Controller
 
     public function store(Request $request)
     {
-        // Verificar que haya un usuario autenticado
         if (!auth()->check()) {
             return back()->with('error',
                 'Debes iniciar sesión para registrar una entrada.'
             )->withInput();
         }
 
-        // Validar los datos recibidos
         $datos = $request->validate([
             'numero' => 'required|string|max:255|unique:entradas,numero',
             'fecha' => 'required|date',
             'hora' => 'required|date_format:H:i',
             'ubicacion_id' => 'required|exists:locations,id',
             'observaciones' => 'nullable|string',
-
             'detalles' => 'required|array|min:1',
             'detalles.*.producto_id' => 'required|distinct|exists:productos,id',
             'detalles.*.cantidad' => 'required|integer|min:1',
-        ], [
-            'numero.required' => 'El número de entrada es obligatorio.',
-            'numero.unique' => 'Este número de entrada ya existe.',
-            'fecha.required' => 'La fecha es obligatoria.',
-            'hora.required' => 'La hora es obligatoria.',
-            'ubicacion_id.required' => 'Debes seleccionar una ubicación.',
-            'detalles.required' => 'Debes agregar al menos un producto.',
-            'detalles.*.producto_id.required' => 'Selecciona un producto.',
-            'detalles.*.producto_id.distinct' => 'No puedes repetir un producto en la misma entrada.',
-            'detalles.*.cantidad.required' => 'La cantidad es obligatoria.',
-            'detalles.*.cantidad.integer' => 'La cantidad debe ser un número entero.',
-            'detalles.*.cantidad.min' => 'La cantidad debe ser mayor que cero.',
         ]);
 
-        // Guardar cabecera y detalles en una sola transacción
         DB::transaction(function () use ($datos) {
-
             $entrada = Entrada::create([
                 'numero' => $datos['numero'],
                 'fecha' => $datos['fecha'],
@@ -82,7 +66,67 @@ class EntradaController extends Controller
         });
 
         return redirect()
-            ->route('entradas.create')
-            ->with('success', 'La entrada se registró correctamente.');
+            ->route('entradas.index')
+            ->with('success', 'Entrada registrada correctamente.');
+    }
+
+    public function index()
+    {
+        $entradas = Entrada::with(['usuario', 'ubicacion'])
+            ->orderByDesc('id')
+            ->paginate(10);
+
+        return view('entradas.index', compact('entradas'));
+    }
+
+    public function show(Entrada $entrada)
+    {
+        $entrada->load([
+            'usuario',
+            'ubicacion',
+            'detalles.producto'
+        ]);
+
+        return view('entradas.show', compact('entrada'));
+    }
+
+    public function confirmar(Entrada $entrada)
+    {
+        DB::transaction(function () use ($entrada) {
+
+            $entrada = Entrada::whereKey($entrada->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($entrada->estado !== 'borrador') {
+                throw ValidationException::withMessages([
+                    'estado' => 'Esta entrada ya fue confirmada o no puede confirmarse.',
+                ]);
+            }
+
+            $detalles = $entrada->detalles()->get();
+
+            if ($detalles->isEmpty()) {
+                throw ValidationException::withMessages([
+                    'detalles' => 'No puedes confirmar una entrada sin productos.',
+                ]);
+            }
+
+            foreach ($detalles as $detalle) {
+                $producto = productos::whereKey($detalle->producto_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $producto->increment('stock', $detalle->cantidad);
+            }
+
+            $entrada->update([
+                'estado' => 'confirmada',
+            ]);
+        });
+
+        return redirect()
+            ->route('entradas.show', $entrada)
+            ->with('success', 'Entrada confirmada y existencias actualizadas.');
     }
 }
