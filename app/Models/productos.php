@@ -23,7 +23,6 @@ class productos extends Model
 
     /**
      * Scope para consultar únicamente productos activos
-     * (RF-004: Bloqueo de operaciones para productos inactivos en entradas/salidas)
      */
     public function scopeActivos($query)
     {

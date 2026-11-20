@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo')->unique(); // RF-001: Código único
-            $table->string('nombre');          // RF-001: Nombre
-            $table->text('descripcion')->nullable(); // RF-001: Descripción
-            $table->string('categoria');       // RF-001: Categoría
-            $table->string('unidad');          // RF-001: Unidad de medida
-            $table->integer('stock')->default(0); // Existencias iniciales en 0
-            $table->string('estado')->default('activo'); // RF-004: activo o inactivo
+            $table->string('codigo')->unique();
+            $table->string('nombre');      
+            $table->text('descripcion')->nullable(); 
+            $table->string('categoria');       
+            $table->string('unidad');          
+            $table->integer('stock')->default(0); 
+            $table->string('estado')->default('activo'); 
             $table->timestamps();
         });
     }

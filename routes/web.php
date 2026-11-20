@@ -19,6 +19,15 @@ Route::get('/entradas/crear', [EntradaController::class, 'create'])
 Route::post('/entradas', [EntradaController::class, 'store'])
     ->name('entradas.store');
 
+Route::get('/entradas', [EntradaController::class, 'index'])
+    ->name('entradas.index');
+
+Route::get('/entrada/{entrada}',[EntradaController::class, 'show'])
+    ->name('entradas.show'); 
+
+Route::patch('entrada/{entrada}/confirmar',[EntradaController::class, 'confirmar'])
+    ->name('entradas.confirmar'); 
+
 
 Route::get('/login', [AuthController::class, 'showLogin'])  //muestra el formulario
     ->name('login');
@@ -32,3 +41,4 @@ Route::get('/registro', [AuthController::class, 'showRegister'])
     ->name('register');
 Route::post('/registro', [AuthController::class, 'register'])
     ->name('register.post');
+
