@@ -6,7 +6,7 @@
 </div>
 
 <form action="{{ route('locations.store') }}" method="POST">
-    <!-- Token de seguridad obligatorio en Laravel -->
+    
     @csrf
 
     <div class="mb-3">
