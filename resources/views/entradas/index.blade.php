@@ -14,12 +14,6 @@
         </a>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="card shadow-sm border-0">
         <div class="card-body">
             <div class="table-responsive">
@@ -28,6 +22,8 @@
                         <tr>
                             <th>Número</th>
                             <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Productos</th> 
                             <th>Ubicación</th>
                             <th>Usuario</th>
                             <th>Estado</th>
@@ -45,6 +41,20 @@
                                 <td>
                                     {{ $entrada->fecha?->format('d/m/Y') }}
                                 </td>
+                                
+                                <td>
+                                    {{ $entrada->hora }}
+                                </td>
+
+                                <td>
+                                    @forelse ($entrada->detalles as $detalle)
+                                        <div>
+                                            {{ $detalle->producto->nombre ?? 'Producto no disponible' }}
+                                        </div>
+                                    @empty
+                                        <span class="text-muted">Sin productos</span>
+                                    @endforelse
+                                </td>
 
                                 <td>
                                     {{ $entrada->ubicacion->name ?? 'Sin ubicación' }}
@@ -58,20 +68,20 @@
                                     @if ($entrada->estado === 'confirmada')
                                         <span class="badge bg-success">Confirmada</span>
                                     @else
-                                        <span class="badge bg-warning text-dark">Borrador</span>
+                                        <span class="badge bg-warning text-dark">Sin confirmar</span>
                                     @endif
                                 </td>
 
                                 <td class="text-center">
                                     <a href="{{ route('entradas.show', $entrada) }}"
-                                       class="btn btn-sm btn-outline-primary">
+                                       class="btn btn-sm btn-outline-success">
                                         Ver detalle
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
+                                <td colspan="8" class="text-center text-muted py-4">
                                     No hay entradas registradas.
                                 </td>
                             </tr>

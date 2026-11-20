@@ -44,6 +44,30 @@ class EntradaController extends Controller
             'detalles' => 'required|array|min:1',
             'detalles.*.producto_id' => 'required|distinct|exists:productos,id',
             'detalles.*.cantidad' => 'required|integer|min:1',
+        ], [
+            'numero.required' => 'El número de entrada es obligatorio.',
+            'numero.unique' => 'Este número de entrada ya está registrado. Por favor, ingresa uno diferente.',
+            'numero.max' => 'El número de entrada no puede superar los 255 caracteres.',
+
+            'fecha.required' => 'La fecha de entrada es obligatoria.',
+            'fecha.date' => 'Ingresa una fecha válida.',
+
+            'hora.required' => 'La hora de entrada es obligatoria.',
+            'hora.date_format' => 'Ingresa una hora válida.',
+
+            'ubicacion_id.required' => 'Debes seleccionar una ubicación.',
+            'ubicacion_id.exists' => 'La ubicación seleccionada no es válida.',
+
+            'detalles.required' => 'Debes agregar al menos un producto.',
+            'detalles.min' => 'Debes agregar al menos un producto.',
+
+            'detalles.*.producto_id.required' => 'Debes seleccionar un producto.',
+            'detalles.*.producto_id.distinct' => 'No puedes repetir un producto en la misma entrada.',
+            'detalles.*.producto_id.exists' => 'Uno de los productos seleccionados no existe.',
+
+            'detalles.*.cantidad.required' => 'La cantidad es obligatoria.',
+            'detalles.*.cantidad.integer' => 'La cantidad debe ser un número entero.',
+            'detalles.*.cantidad.min' => 'La cantidad debe ser de al menos 1 unidad.',
         ]);
 
         DB::transaction(function () use ($datos) {
@@ -72,7 +96,11 @@ class EntradaController extends Controller
 
     public function index()
     {
-        $entradas = Entrada::with(['usuario', 'ubicacion'])
+        $entradas = Entrada::with([
+            'usuario',
+            'ubicacion',
+            'detalles.producto'
+        ])
             ->orderByDesc('id')
             ->paginate(10);
 
@@ -81,7 +109,7 @@ class EntradaController extends Controller
 
     public function show(Entrada $entrada)
     {
-        $entrada->load([
+        $entrada->load([    
             'usuario',
             'ubicacion',
             'detalles.producto'

@@ -83,6 +83,21 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     });
 
-    Route::get('/entradas/crear', [EntradaController::class, 'create'])->name('entradas.create');
-    Route::post('/entradas', [EntradaController::class, 'store'])->name('entradas.store');
+
+
+    Route::get('/entradas', [EntradaController::class, 'index'])
+        ->name('entradas.index');
+
+    Route::get('/entradas/crear', [EntradaController::class, 'create'])
+        ->name('entradas.create');
+
+    Route::post('/entradas', [EntradaController::class, 'store'])
+        ->name('entradas.store');
+
+    Route::get('/entradas/{entrada}', [EntradaController::class, 'show'])
+        ->name('entradas.show');
+
+    Route::patch('/entradas/{entrada}/confirmar', [EntradaController::class, 'confirmar'])
+        ->name('entradas.confirmar');
 });
+

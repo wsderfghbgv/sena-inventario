@@ -226,6 +226,9 @@
                                     <a class="dropdown-item" href="{{ route('entradas.create') }}">
                                         Registrar Entrada
                                     </a>
+                                    <a class="dropdown-item" href="{{ route('entradas.index') }}">
+                                        Listado de Entradas
+                                    </a>
                                 </li>
                             </ul>
                         </li>
