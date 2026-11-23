@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
@@ -114,16 +115,30 @@ class LocationController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    {
-        $location = Location::findOrFail($id);
+{
+    $location = Location::findOrFail($id);
 
-        $tieneHijos = Location::where('parent_id', $location->id)->exists();
+    // Verificar si tiene sub-ubicaciones
+    $tieneHijos = Location::where('parent_id', $location->id)->exists();
 
-        if ($tieneHijos) {
-            return redirect()->route('locations.index')->with('error', 'No se puede eliminar porque tiene sub-ubicaciones asignadas.');
-        }
-
-        $location->delete();
-        return redirect()->route('locations.index')->with('success', 'Ubicación eliminada correctamente');
+    if ($tieneHijos) {
+        return redirect()->route('locations.index')
+            ->with('error', 'No se puede eliminar porque tiene sub-ubicaciones asignadas.');
     }
+
+    // Verificar si tiene entradas asociadas
+    $tieneEntradas = DB::table('entradas')
+        ->where('ubicacion_id', $location->id)
+        ->exists();
+
+    if ($tieneEntradas) {
+        return redirect()->route('locations.index')
+            ->with('error', 'No se puede eliminar porque tiene entradas asociadas.');
+    }
+
+    // Eliminar ubicación
+    $location->delete();
+
+    return redirect()->route('locations.index')
+        ->with('success', 'Ubicación eliminada correctamente');
 }
